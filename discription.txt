@@ -1,0 +1,87 @@
+########################
+
+説明.txt
+
+日付：2017/2/6
+作成：株式会社エコリス
+http://www.ecoris.co.jp
+########################
+
+■概略
+「RuLIS-WEB」の公開データから、以下のデータ作成を行った。
+
+A)農業生態系区分画像タイル(クラス３）:ズームレベル6～12
+B)農業生態系区分画像タイル(クラス６）:ズームレベル6～12
+C)農業生態系区分UTFグリッドタイル：ズームレベル6～12
+D)上記、区分図およびUTFグリッドデータを表示する地図WEBサイト
+
+■ファイル構成
+作成したデータは、以下のファイル構成となっている。
+
+RULIS/
+├── html/
+│   ├── css/
+│   │   ├── ol.css
+│   │   ├── ol3-layerswitcher.css
+│   │   ├── ol3-popup.css
+│   │   └── rulis.css
+│   ├── js/
+│   │   ├── ol.js
+│   │   ├── ol3-layerswitcher.js
+│   │   ├── ol3-popup.js
+│   │   ├── rulis.js
+│   │   ├── rulis_cl3.js
+│   │   └── rulis_cl6.js
+│   ├── legend.html
+│   ├── rulis.html
+│   ├── rulis_cl3.html
+│   └── rulis_cl6.html
+└── tiles/
+    ├── rulis_cl3/
+    ├── rulis_cl6/
+    └── rulis_grid/
+
+■ファイル説明
+
+tiles/フォルダ内
+・rulis_cl3/ 農業生態系区分図(クラス３）の画像タイルフォルダ
+・rulis_cl6/ 農業生態系区分図(クラス６）の画像タイルフォルダ
+・rulis_grid/ 農業生態系区分UTFグリッドタイルフォルダ
+html/フォルダ内
+・rulis_cl3.html クラス3のみ表示用html
+・rulis_cl6.html クラス6のみ表示用html
+・rulis.html クラス3とクラス6を切り替え可能なhtml
+・legend.html 凡例表示用html
+js/フォルダ内
+・ol.js OpenLayersライブラリ Version: v3.20.1
+・ol3-layerswitcher.js レイヤ切り替え用プラグイン
+・ol3-popup.js ポップアップ表示用プラグイン
+・rulis_cl3.js OpenLayersを使用した地図表示等（rulis_cl3.htmlで使用）
+・rulis_cl6.js OpenLayersを使用した地図表示等（rulis_cl6.htmlで使用）
+・rulis.js OpenLayersを使用した地図表示等（rulis.htmlで使用
+css/フォルダ内
+・ol.css ol用CSS
+・ol3-layerswitcher.css ol3-layerswitcher用css 
+・ol3-popup.css ol3-popup用css
+・rulis.css 地図表示全般用css
+
+
+■Webサーバーへの設置＆確認方法
+
+1. htmlフォルダおよびtilesフォルダを同じ階層でサーバーにアップロード
+2. rulis.html、rulis_cl3.html、rulis_cl6.htmlにアクセスして表示できるか確認
+
+■フォルダ構成の変更方法
+
+フォルダ名や階層を変更する場合は、以下のファイル内のパスの変更確認をしてください。
+
+・rulis.html内のcssおよびjsのパス
+・rulis.js内の農業生態系区分タイル画像およびUTFグリッドファイルのURLのパス
+
+※rulis_cl3.html、rulis_cl3.js、rulis_cl6.html、rulis_cl6.jsについても同様
+
+
+■注意事項
+ローカルネットワークで、htmlファイルを開いた場合、地図は表示されますが、UTFグリッドのデータは表示されません。
+
+※UTFグリッドについてはサーバーにアップロードして確認してください。

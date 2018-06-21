@@ -1,4 +1,12 @@
-﻿/*ベース地図*/
+﻿/*Github tile URL*/
+var cl3tileURLzoom6_11 = "https://wata909.github.io/RuLIS_Web/tiles/rulis_cl3/";
+var cl3tileURLzoom12 = "https://wata909.github.io/RuLIS_tile12/tiles/rulis_cl3/";
+var cl6tileURLzoom6_11 = "https://wata909.github.io/RuLIS_Web/tiles/rulis_cl6/";
+var cl6tileURLzoom12 = "https://wata909.github.io/RuLIS_tile12/tiles/rulis_cl6/";
+var utfgridURLzoom6_11 = "https://wata909.github.io/RuLIS_Web/tiles/rulis_grid/";
+var utfgridURLzoom12 = "https://wata909.github.io/RuLIS_tile12/tiles/rulis_grid/";
+
+/*ベース地図*/
 var blankLayer = new ol.layer.Tile({
     title: '地理院タイル(白地図)',
     type: 'base',
@@ -47,13 +55,13 @@ var hillLayer = new ol.layer.Tile({
 
 
 /*オーバーレイ地図*/
-var gridSource = new ol.source.TileUTFGrid({
+var gridSource1 = new ol.source.TileUTFGrid({
     tileJSON: {
         "jsonp": false,
         //"attribution": "国立研究開発法人 農業環境技術研究",
         "bounds": [122.9, 20.4, 154, 45.6],
-        "grids": ["../tiles/rulis_grid/{z}/{x}/{y}.grid.json"],
-        "maxzoom": 12,
+        "grids": [utfgridURLzoom6_11 + "{z}/{x}/{y}.grid.json"],
+        "maxzoom": 11,
         "minzoom": 6,
         "scheme": "xyz",
         "tilejson": "2.0.0",
@@ -61,34 +69,93 @@ var gridSource = new ol.source.TileUTFGrid({
     }
 })
 
-
-var gridLayer = new ol.layer.Tile({
-    source: gridSource
+var gridSource2 = new ol.source.TileUTFGrid({
+    tileJSON: {
+        "jsonp": false,
+        //"attribution": "国立研究開発法人 農業環境技術研究",
+        "bounds": [122.9, 20.4, 154, 45.6],
+        "grids": [utfgridURLzoom12 + "{z}/{x}/{y}.grid.json"],
+        "maxzoom": 12,
+        "minzoom": 12,
+        "scheme": "xyz",
+        "tilejson": "2.0.0",
+        "version": "1.0.0"
+    }
 })
 
 var MaxZoom = 12;
 var MinResolution  = 40075016.68557849/256/Math.pow(2, MaxZoom);
 
-var cl3Layer = new ol.layer.Tile({
-    title: "農業景観類型レベル3<div><input id='slider_cl3' type='range' value='70' oninput='changeOpacity(\"cl3\")' onchange='changeOpacity(\"cl3\")'/></div>",
-    source: new ol.source.XYZ({
-        attributions: [new ol.Attribution({
+var gridSource = gridSource1
+var gridLayer = new ol.layer.Tile({
+    source: gridSource1
+})
+
+
+var cl3Source = new ol.source.XYZ({
+	attributions: [new ol.Attribution({
             html: "<a href='http://www.niaes.affrc.go.jp/' target='_blank'>国立研究開発法人 農業環境技術研究所</a>"
         })],
-        url: '../tiles/rulis_cl3/{z}/{x}/{y}.png'
-    }),
+    tileUrlFunction: function (coordinate, pixelRatio, proj) {
+        var x = coordinate[1];
+        var y = -1*coordinate[2]-1;
+        var z = coordinate[0];
+        var tilename = z.toString()+'/'+ x.toString() +'/'+y.toString() +'.png'
+        var urls = [cl3tileURLzoom6_11 + tilename,cl3tileURLzoom12+tilename];
+        var res = map.getView().getResolution();
+        var tileUrl = '';
+		var ThreshResolution = 40075016.68557849/256/Math.pow(2, 12);
+        if (res > ThreshResolution) {
+            tileUrl = urls[0];
+             gridLayer.setSource(gridSource1);
+             gridSource = gridSource1
+        }
+        else if(res == ThreshResolution) {
+            tileUrl = urls[1];
+            gridLayer.setSource(gridSource2);
+            gridSource = gridSource2
+        }
+        return tileUrl;
+    }
+});
+
+var cl6Source = new ol.source.XYZ({
+	attributions: [new ol.Attribution({
+            html: "<a href='http://www.niaes.affrc.go.jp/' target='_blank'>国立研究開発法人 農業環境技術研究所</a>"
+        })],
+    tileUrlFunction: function (coordinate, pixelRatio, proj) {
+        var x = coordinate[1];
+        var y = -1*coordinate[2]-1;
+        var z = coordinate[0];
+        var tilename = z.toString()+'/'+ x.toString() +'/'+y.toString() +'.png'
+        var urls = [cl6tileURLzoom6_11 + tilename,cl6tileURLzoom12+tilename];
+        var res = map.getView().getResolution();
+        var tileUrl = '';
+		var ThreshResolution = 40075016.68557849/256/Math.pow(2, 12);
+        if (res > ThreshResolution) {
+            tileUrl = urls[0];
+             gridLayer.setSource(gridSource1);
+             gridSource = gridSource1
+        }
+        else if(res == ThreshResolution) {
+            tileUrl = urls[1];
+             gridLayer.setSource(gridSource2);
+             gridSource = gridSource2
+        }
+        return tileUrl;
+    }
+});
+
+var cl3Layer = new ol.layer.Tile({
+    title: "農業景観類型レベル3<div><input id='slider_cl3' type='range' value='70' oninput='changeOpacity(\"cl3\")' onchange='changeOpacity(\"cl3\")'/></div>",
+    source: cl3Source,
     opacity: 0.7,
     visible: true,
     minResolution: MinResolution
 })
 var cl6Layer = new ol.layer.Tile({
     title: "農業景観類型レベル6<div><input id='slider_cl6' type='range' value='70' oninput='changeOpacity(\"cl6\")' onchange='changeOpacity(\"cl6\")'/></div>",
-    source: new ol.source.XYZ({
-        attributions: [new ol.Attribution({
-            html: "<a href='http://www.niaes.affrc.go.jp/' target='_blank'>国立研究開発法人 農業環境技術研究所</a>"
-        })],
-        url: '../tiles/rulis_cl6/{z}/{x}/{y}.png'
-    }),
+    source: cl6Source,
     opacity: 0.7,
     visible: false,
     minResolution: MinResolution
@@ -195,18 +262,22 @@ map.on('pointermove', function(evt) {
     }
     var coordinate = map.getEventCoordinate(evt.originalEvent);
     var viewResolution = (map.getView().getResolution());
-    gridSource.forDataAtCoordinateAndResolution(coordinate, viewResolution,
-        function(data) {
-            //ポップアップを表示している場合は表示しない
-            if (data && popup.container.style.display != 'block') {
-                document.getElementById("tooltip").style.opacity = 1;
-                document.getElementById("tooltip").innerHTML = genDataTable(data);
-
-            } else {
-                document.getElementById("tooltip").style.opacity = 0;
-            }
-
-        });
+    if(viewResolution >= MinResolution){
+	    gridSource.forDataAtCoordinateAndResolution(coordinate, viewResolution,
+	        function(data) {
+	            //ポップアップを表示している場合は表示しない
+	            if (data && popup.container.style.display != 'block') {
+	                document.getElementById("tooltip").style.opacity = 1;
+	                document.getElementById("tooltip").innerHTML = genDataTable(data);
+	
+	            } else {
+	                document.getElementById("tooltip").style.opacity = 0;
+	            }
+	
+	        });
+	}else{
+		document.getElementById("tooltip").style.opacity = 0;
+    }
 });
 
 
@@ -214,17 +285,19 @@ map.on('pointermove', function(evt) {
 map.on('singleclick', function(evt) {
     var coordinate = map.getEventCoordinate(evt.originalEvent);
     var viewResolution = (map.getView().getResolution());
-    gridSource.forDataAtCoordinateAndResolution(coordinate, viewResolution,
-        function(data) {
-
-            if (data) {
-                html = "<div id='popup-legend-open'>凡例表示</div><p/>" + genDataTable(data)
-                popup.show(coordinate, html);
-                document.getElementById("popup-legend-open").setAttribute("onclick", "document.getElementById('legend').style.display='block';");
-
-            }
-
-        });
+	if(viewResolution >= MinResolution){
+	    gridSource.forDataAtCoordinateAndResolution(coordinate, viewResolution,
+	        function(data) {
+	
+	            if (data) {
+	                html = "<div id='popup-legend-open'>凡例表示</div><p/>" + genDataTable(data)
+	                popup.show(coordinate, html);
+	                document.getElementById("popup-legend-open").setAttribute("onclick", "document.getElementById('legend').style.display='block';");
+	
+	            }
+	
+	        });
+	}
 
 });
 
